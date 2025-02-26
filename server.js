@@ -7,9 +7,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// Pastikan ini ada!
+app.get("/", (req, res) => {
+    res.send("Backend Video AI Berjalan!");
+});
 
-// Endpoint untuk generate skrip video
+// Endpoint untuk generate skrip
 app.post("/generate-script", async (req, res) => {
     try {
         const { prompt } = req.body;
@@ -22,7 +25,7 @@ app.post("/generate-script", async (req, res) => {
                 messages: [{ role: "user", content: `Buat skrip video tentang: ${prompt}` }],
             },
             {
-                headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+                headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
             }
         );
 
@@ -33,8 +36,11 @@ app.post("/generate-script", async (req, res) => {
     }
 });
 
-app.get("/", (req, res) => {
-    res.send("Backend Video AI Berjalan!");
-});
-
+// Jika menggunakan Vercel Serverless, tambahkan ini:
 module.exports = app;
+
+// Jika menggunakan Vercel dengan server normal, gunakan ini:
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server berjalan di port ${port}`);
+});
